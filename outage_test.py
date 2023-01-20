@@ -21,7 +21,7 @@ def return_json(URL):
       return json_obj
     else:
         # Whoops it wasn't a 200
-        raise Exception("Oops! Returned a 500")
+        raise Exception("Oops! Request returned a 500")
 
 # Fetch all outages
 def get_all_outages():

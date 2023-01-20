@@ -1,6 +1,6 @@
 import json
 import pytest
-from outage_test import process_data
+from outage_test import process_data, return_json
 
 fake_outages = """[
   {
@@ -79,3 +79,9 @@ def test_process_data():
     fake_processed_outages_dict = json.loads(fake_processed_outages)
 
     assert processed_dict == fake_processed_outages_dict
+
+def test_return_json():
+  with pytest.raises(Exception) as exc_info:
+      URL = "https://mock.codes/500"
+      return_json(URL=URL)
+      assert exc_info.value.args[0] == "Oops! Request returned a 500"
