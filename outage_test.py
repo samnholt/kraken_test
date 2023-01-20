@@ -13,17 +13,27 @@ SITE_ID = os.getenv('SITE_ID')
 
 selected_outages = []
 
+def return_json(URL):
+    response = requests.get(URL, headers={"x-api-key": API_KEY})
+
+    if response.status_code != 500:
+      json_obj = response.json()
+      return json_obj
+    else:
+        # Whoops it wasn't a 200
+        raise Exception("Oops! Returned a 500")
+
 # Fetch all outages
 def get_all_outages():
-  response_outages =  requests.get(f"{API_URL}outages", headers={"x-api-key": API_KEY})
-  outages = response_outages.json()
+  URL = f"{API_URL}outages"
+  outages = return_json(URL=URL)
   return outages
 
 # Fetch site info
 def get_site_info():
-  response_norwich = requests.get(f"{API_URL}site-info/{SITE_ID}", headers={"x-api-key": API_KEY})
-  norwich_info = response_norwich.json()
-  return norwich_info
+  URL = f"{API_URL}site-info/{SITE_ID}"
+  site_info = return_json(URL=URL)
+  return site_info
 
 # Process outages, removing those before the given date and outside the site
 def process_data(outages, site_info):
@@ -45,8 +55,11 @@ def process_data(outages, site_info):
 # Send list of processed outages to post endpoint
 def post_outages(outages):
   post_response = requests.post(f"{API_URL}site-outages/{SITE_ID}", headers={"x-api-key": API_KEY, "accept": "*/*", "Content-Type": "application/json"}, data=outages)
-  result = post_response.status_code
-  return result
+  if post_response.status_code != 500:
+    result = post_response.status_code
+    return result
+  else:
+    raise Exception("Oops! Request returned a 500.")
 
 def main():
   outages = get_all_outages()
