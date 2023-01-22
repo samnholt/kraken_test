@@ -1,5 +1,4 @@
 import json
-import pytest
 import unittest
 from unittest.mock import patch
 from outage_test import (

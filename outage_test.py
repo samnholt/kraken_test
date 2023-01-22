@@ -16,7 +16,7 @@ selected_outages = []
 
 
 def return_json(URL: str):
-    ''''Ensure that program throws an exception in case of 500 status code'''
+    """'Ensure that program throws an exception in case of 500 status code"""
     response = requests.get(URL, headers={"x-api-key": API_KEY})
 
     if response.status_code != 500:
@@ -27,21 +27,21 @@ def return_json(URL: str):
 
 
 def get_all_outages():
-    '''Fetch all outages'''
+    """Fetch all outages"""
     URL = f"{API_URL}outages"
     outages = return_json(URL=URL)
     return outages
 
 
 def get_site_info():
-    '''Fetch site info'''
+    """Fetch site info"""
     URL = f"{API_URL}site-info/{SITE_ID}"
     site_info = return_json(URL=URL)
     return site_info
 
 
 def process_data(outages: list, site_info: dict):
-    '''Process outages, removing those before the given date and outside the site'''
+    """Process outages, removing those before the given date and outside the site"""
     for outage in outages:
         if outage["id"] in [device["id"] for device in site_info["devices"]]:
             if parser.parse(outage["begin"]) >= datetime.datetime(
@@ -61,7 +61,7 @@ def process_data(outages: list, site_info: dict):
 
 
 def post_outages(outages: str):
-    '''Send list of processed outages to post endpoint'''
+    """Send list of processed outages to post endpoint"""
     post_response = requests.post(
         f"{API_URL}site-outages/{SITE_ID}",
         headers={
