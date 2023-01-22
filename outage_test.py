@@ -15,7 +15,7 @@ SITE_ID = os.getenv("SITE_ID")
 selected_outages = []
 
 
-def return_json(URL):
+def return_json(URL: str):
     ''''Ensure that program throws an exception in case of 500 status code'''
     response = requests.get(URL, headers={"x-api-key": API_KEY})
 
@@ -40,7 +40,7 @@ def get_site_info():
     return site_info
 
 
-def process_data(outages, site_info):
+def process_data(outages: list, site_info: dict):
     '''Process outages, removing those before the given date and outside the site'''
     for outage in outages:
         if outage["id"] in [device["id"] for device in site_info["devices"]]:
@@ -60,7 +60,7 @@ def process_data(outages, site_info):
     return processed_outages
 
 
-def post_outages(outages):
+def post_outages(outages: str):
     '''Send list of processed outages to post endpoint'''
     post_response = requests.post(
         f"{API_URL}site-outages/{SITE_ID}",
