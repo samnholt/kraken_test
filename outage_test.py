@@ -2,7 +2,9 @@ import json
 import os
 import requests
 import datetime
+import pytz
 
+from dateutil import parser, tz
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -39,7 +41,7 @@ def get_site_info():
 def process_data(outages, site_info):
   for outage in outages:
       if outage['id'] in [device['id'] for device in site_info['devices']]:
-          if datetime.datetime.fromisoformat(outage['begin']) >= datetime.datetime.fromisoformat('2022-01-01T00:00:00.000Z'):
+          if parser.parse(outage['begin']) >= datetime.datetime(2022, 1, 1, tzinfo=tz.tzutc()):
             selected_outages.append(outage)
 
   for selected_outage in selected_outages:
