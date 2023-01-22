@@ -153,9 +153,9 @@ class TestGetSiteInfo(unittest.TestCase):
 
 class TestProcessData(unittest.TestCase):
     def test_process_data(self):
-        outages_dict = json.loads(fake_outages)
+        outages_list = json.loads(fake_outages)
         site_info_dict = json.loads(fake_site_info)
-        processed = process_data(outages=outages_dict, site_info=site_info_dict)
+        processed = process_data(outages=outages_list, site_info=site_info_dict)
         processed_dict = json.loads(processed)
         fake_processed_outages_dict = json.loads(fake_processed_outages)
 
