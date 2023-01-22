@@ -156,10 +156,10 @@ class TestProcessData(unittest.TestCase):
         outages_list = json.loads(fake_outages)
         site_info_dict = json.loads(fake_site_info)
         processed = process_data(outages=outages_list, site_info=site_info_dict)
-        processed_dict = json.loads(processed)
-        fake_processed_outages_dict = json.loads(fake_processed_outages)
+        processed_list = json.loads(processed)
+        fake_processed_outages_list = json.loads(fake_processed_outages)
 
-        self.assertEqual(processed_dict, fake_processed_outages_dict)
+        self.assertEqual(processed_list, fake_processed_outages_list)
 
 
 class TestPostOutages(unittest.TestCase):
