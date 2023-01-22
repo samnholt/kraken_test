@@ -99,7 +99,7 @@ class TestReturnJson(unittest.TestCase):
 class TestGetAllOutages(unittest.TestCase):
     def test_get_all_outages(self):
         with patch("requests.get") as mock_get:
-            mock_get.return_value == 200
+            mock_get.return_value.status_code == 200
             mock_get.return_value.json.return_value = [
                 {
                     "id": "002b28fc-283c-47ec-9af2-ea287336dc1b",
@@ -123,7 +123,7 @@ class TestGetAllOutages(unittest.TestCase):
 class TestGetSiteInfo(unittest.TestCase):
     def test_get_all_outages(self):
         with patch("requests.get") as mock_get:
-            mock_get.return_value == 200
+            mock_get.return_value.status_code == 200
             mock_get.return_value.json.return_value = {
                 "id": "kingfisher",
                 "name": "KingFisher",
@@ -151,12 +151,31 @@ class TestGetSiteInfo(unittest.TestCase):
                 },
             )
 
-class TestProcessData(unittest.TestCase):
-  def test_process_data(self):
-      outages_dict = json.loads(fake_outages)
-      site_info_dict = json.loads(fake_site_info)
-      processed = process_data(outages=outages_dict, site_info=site_info_dict)
-      processed_dict = json.loads(processed)
-      fake_processed_outages_dict = json.loads(fake_processed_outages)
 
-      self.assertEqual(processed_dict, fake_processed_outages_dict)
+class TestProcessData(unittest.TestCase):
+    def test_process_data(self):
+        outages_dict = json.loads(fake_outages)
+        site_info_dict = json.loads(fake_site_info)
+        processed = process_data(outages=outages_dict, site_info=site_info_dict)
+        processed_dict = json.loads(processed)
+        fake_processed_outages_dict = json.loads(fake_processed_outages)
+
+        self.assertEqual(processed_dict, fake_processed_outages_dict)
+
+
+class TestPostOutages(unittest.TestCase):
+    def post_outages_success(self):
+        with patch("requests.post") as mock_post:
+            mock_post.return_value.status_code = 200
+            result = post_outages(fake_processed_outages)
+            self.assertEqual(result, 200)
+
+    def post_outages_fail(self):
+        with patch("requests.post") as mock_post:
+            mock_post.return_value.status_code = 500
+            result = post_outages(fake_processed_outages)
+            self.assertEqual(result, 500)
+
+
+if __name__ == "__main__":
+    unittest.main()
