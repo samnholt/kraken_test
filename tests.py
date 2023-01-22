@@ -1,6 +1,14 @@
 import json
 import pytest
-from outage_test import process_data, return_json
+import unittest
+from unittest.mock import patch
+from outage_test import (
+    process_data,
+    return_json,
+    get_all_outages,
+    get_site_info,
+    post_outages,
+)
 
 fake_outages = """[
   {
@@ -71,17 +79,84 @@ fake_processed_outages = """[
   }
 ]"""
 
-def test_process_data():
-    outages_dict = json.loads(fake_outages)
-    site_info_dict = json.loads(fake_site_info)
-    processed = process_data(outages=outages_dict, site_info=site_info_dict)
-    processed_dict = json.loads(processed)
-    fake_processed_outages_dict = json.loads(fake_processed_outages)
 
-    assert processed_dict == fake_processed_outages_dict
+class TestReturnJson(unittest.TestCase):
+    def test_return_json_success(self):
+        # Test that the function returns a JSON object on success
+        with patch("requests.get") as mock_get:
+            mock_get.return_value.status_code = 200
+            mock_get.return_value.json.return_value = {"status": "success"}
+            result = return_json("example.test")
+            self.assertEqual(result, {"status": "success"})
 
-def test_return_json():
-  with pytest.raises(Exception) as exc_info:
-      URL = "https://mock.codes/500"
-      return_json(URL=URL)
-      assert exc_info.value.args[0] == "Oops! Request returned a 500"
+    def test_return_json_fail(self):
+        # Test that the function raises an exception on failure
+        with patch("requests.get") as mock_get:
+            mock_get.return_value.status_code = 500
+            self.assertRaises(Exception, return_json, "example.test")
+
+
+class TestGetAllOutages(unittest.TestCase):
+    def test_get_all_outages(self):
+        with patch("requests.get") as mock_get:
+            mock_get.return_value == 200
+            mock_get.return_value.json.return_value = [
+                {
+                    "id": "002b28fc-283c-47ec-9af2-ea287336dc1b",
+                    "begin": "2021-07-26T17:09:31.036Z",
+                    "end": "2021-08-29T00:37:42.253Z",
+                },
+            ]
+            result = get_all_outages()
+            self.assertEqual(
+                result,
+                [
+                    {
+                        "id": "002b28fc-283c-47ec-9af2-ea287336dc1b",
+                        "begin": "2021-07-26T17:09:31.036Z",
+                        "end": "2021-08-29T00:37:42.253Z",
+                    },
+                ],
+            )
+
+
+class TestGetSiteInfo(unittest.TestCase):
+    def test_get_all_outages(self):
+        with patch("requests.get") as mock_get:
+            mock_get.return_value == 200
+            mock_get.return_value.json.return_value = {
+                "id": "kingfisher",
+                "name": "KingFisher",
+                "devices": [
+                    {"id": "002b28fc-283c-47ec-9af2-ea287336dc1b", "name": "Battery 1"},
+                    {"id": "086b0d53-b311-4441-aaf3-935646f03d4d", "name": "Battery 2"},
+                ],
+            }
+            result = get_site_info()
+            self.assertEqual(
+                result,
+                {
+                    "id": "kingfisher",
+                    "name": "KingFisher",
+                    "devices": [
+                        {
+                            "id": "002b28fc-283c-47ec-9af2-ea287336dc1b",
+                            "name": "Battery 1",
+                        },
+                        {
+                            "id": "086b0d53-b311-4441-aaf3-935646f03d4d",
+                            "name": "Battery 2",
+                        },
+                    ],
+                },
+            )
+
+class TestProcessData(unittest.TestCase):
+  def test_process_data(self):
+      outages_dict = json.loads(fake_outages)
+      site_info_dict = json.loads(fake_site_info)
+      processed = process_data(outages=outages_dict, site_info=site_info_dict)
+      processed_dict = json.loads(processed)
+      fake_processed_outages_dict = json.loads(fake_processed_outages)
+
+      self.assertEqual(processed_dict, fake_processed_outages_dict)
