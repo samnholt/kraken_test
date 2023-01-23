@@ -22,7 +22,7 @@ def return_json(URL: str):
     response = requests.get(URL, headers={"x-api-key": API_KEY})
 
     if response.status_code != 500:
-        logging.debug("Server is OK")
+        logging.info("Server is OK")
         json_obj = response.json()
         return json_obj
     else:
@@ -31,8 +31,8 @@ def return_json(URL: str):
 
 def get_all_outages():
     """Fetch all outages"""
-    logging.info("Fetching all of outages")
-    URL = f"{API_URL}outages"
+    logging.info("Fetching all outages")
+    URL = f"{API_URL}/outages"
     outages = return_json(URL=URL)
     return outages
 
@@ -40,7 +40,7 @@ def get_all_outages():
 def get_site_info():
     """Fetch site info"""
     logging.info("Fetching site info")
-    URL = f"{API_URL}site-info/{SITE_ID}"
+    URL = f"{API_URL}/site-info/{SITE_ID}"
     site_info = return_json(URL=URL)
     return site_info
 
@@ -70,7 +70,7 @@ def post_outages(outages: str):
     """Send list of processed outages to post endpoint"""
     logging.info("Posting outages back to endpoint")
     post_response = requests.post(
-        f"{API_URL}site-outages/{SITE_ID}",
+        f"{API_URL}/site-outages/{SITE_ID}",
         headers={
             "x-api-key": API_KEY,
             "accept": "*/*",
