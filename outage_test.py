@@ -22,7 +22,7 @@ def return_json(URL: str):
     response = requests.get(URL, headers={"x-api-key": API_KEY})
 
     if response.status_code != 500:
-        logging.debug('Server is OK')
+        logging.debug("Server is OK")
         json_obj = response.json()
         return json_obj
     else:
@@ -56,11 +56,9 @@ def process_data(outages: list, site_info: dict):
                 logging.info(f"Found outage matching conditions: {outage['id']}")
                 selected_outages.append(outage)
 
-    for selected_outage in selected_outages:
-        id = selected_outage["id"]
-        for device in site_info["devices"]:
-            if device["id"] == id:
-                selected_outage["name"] = device["name"]
+    names = {device["id"]: device["name"] for device in site_info["devices"]}
+    for outage in selected_outages:
+        outage["name"] = names[outage["id"]]
 
     logging.info("All relevant outages processed")
     processed_outages = json.dumps(selected_outages)
