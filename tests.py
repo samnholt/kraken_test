@@ -81,7 +81,7 @@ fake_processed_outages = """[
 
 class TestReturnJson(unittest.TestCase):
     def test_return_json_success(self):
-        '''Test that the function returns a JSON object on success'''
+        """Test that the function returns a JSON object on success"""
         with patch("requests.get") as mock_get:
             mock_get.return_value.status_code = 200
             mock_get.return_value.json.return_value = {"status": "success"}
@@ -89,14 +89,15 @@ class TestReturnJson(unittest.TestCase):
             self.assertEqual(result, {"status": "success"})
 
     def test_return_json_fail(self):
-        '''Test that the function raises an exception on failure'''
+        """Test that the function raises an exception on failure"""
         with patch("requests.get") as mock_get:
             mock_get.return_value.status_code = 500
             self.assertRaises(Exception, return_json, "example.test")
 
 
 class TestGetAllOutages(unittest.TestCase):
-    '''Test that the function returns an outage'''
+    """Test that the function returns an outage"""
+
     def test_get_all_outages(self):
         with patch("requests.get") as mock_get:
             mock_get.return_value.status_code == 200
@@ -122,7 +123,7 @@ class TestGetAllOutages(unittest.TestCase):
 
 class TestGetSiteInfo(unittest.TestCase):
     def test_get_site_info(self):
-        '''Test that the function returns some site info'''
+        """Test that the function returns some site info"""
         with patch("requests.get") as mock_get:
             mock_get.return_value.status_code == 200
             mock_get.return_value.json.return_value = {
@@ -155,7 +156,7 @@ class TestGetSiteInfo(unittest.TestCase):
 
 class TestProcessData(unittest.TestCase):
     def test_process_data(self):
-        '''Test that the data is processed correctly'''
+        """Test that the data is processed correctly"""
         outages_list = json.loads(fake_outages)
         site_info_dict = json.loads(fake_site_info)
         processed = process_data(outages=outages_list, site_info=site_info_dict)
@@ -167,14 +168,14 @@ class TestProcessData(unittest.TestCase):
 
 class TestPostOutages(unittest.TestCase):
     def test_post_outages_success(self):
-        '''Test that we handle a 200 successfully'''
+        """Test that we handle a 200 successfully"""
         with patch("requests.post") as mock_post:
             mock_post.return_value.status_code = 200
             result = post_outages(fake_processed_outages)
             self.assertEqual(result, 200)
 
     def test_post_outages_fail(self):
-        '''Test that we handle a 500 successfully'''
+        """Test that we handle a 500 successfully"""
         with patch("requests.post") as mock_post:
             mock_post.return_value.status_code = 500
             self.assertRaises(Exception, post_outages, fake_processed_outages)
