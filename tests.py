@@ -120,7 +120,7 @@ class TestGetAllOutages(unittest.TestCase):
 
 
 class TestGetSiteInfo(unittest.TestCase):
-    def test_get_all_outages(self):
+    def test_get_site_info(self):
         with patch("requests.get") as mock_get:
             mock_get.return_value.status_code == 200
             mock_get.return_value.json.return_value = {
@@ -163,17 +163,16 @@ class TestProcessData(unittest.TestCase):
 
 
 class TestPostOutages(unittest.TestCase):
-    def post_outages_success(self):
+    def test_post_outages_success(self):
         with patch("requests.post") as mock_post:
             mock_post.return_value.status_code = 200
             result = post_outages(fake_processed_outages)
             self.assertEqual(result, 200)
 
-    def post_outages_fail(self):
+    def test_post_outages_fail(self):
         with patch("requests.post") as mock_post:
             mock_post.return_value.status_code = 500
-            result = post_outages(fake_processed_outages)
-            self.assertEqual(result, 500)
+            self.assertRaises(Exception, post_outages, fake_processed_outages)
 
 
 if __name__ == "__main__":
